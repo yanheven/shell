@@ -1,5 +1,5 @@
 adduser stack
-apt-get install sudo -y
+#apt-get install sudo -y
 echo "stack ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 su stack
 cd ~
