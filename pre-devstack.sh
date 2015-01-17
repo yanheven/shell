@@ -1,3 +1,4 @@
+#!/bin/sh
 mkdir /opt/stack
 REMOTE_HOST=58.67.194.157
 PROJECT=("keystone" "glance" "cinder" "nova" "horizon" "heat" "requirements")
