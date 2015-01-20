@@ -1,0 +1,138 @@
+
+<!DOCTYPE html> <html> <head> <meta name="apple-mobile-web-app-capable"
+content="yes" /> <meta name="viewport" content="width=1300" /> <meta
+name="keywords" content="" /> <meta name="description" content="" />
+<title>用户注册 - PLCloud</title> 
+
+<link rel="stylesheet" type="text/css" media="screen"
+href="/static/newui/css/bootstrap.min.css"> <link rel="stylesheet"
+type="text/css" media="screen" href="/static/newui/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" media="screen"
+href="/static/newui/css/datepicker.css"> <!-- SmartAdmin Styles : Please note
+(smartadmin-production.css) was created using LESS variables --> <link
+rel="stylesheet" type="text/css" media="screen"
+href="/static/newui/css/smartadmin-production.css"> <link rel="stylesheet"
+type="text/css" media="screen" href="/static/newui/css/smartadmin-skins.css"> 
+<link rel="stylesheet" type="text/css" media="screen"
+href="/static/newui/css/demo.css"> 
+<link rel="shortcut icon" href="/static/dashboard/img/favicon.ico"/> 
+<script src='/static/horizon/lib/jquery/jquery.min.js' type='text/javascript'
+charset="utf-8"></script> <script src="/static/bootstrap/js/bootstrap.min.js"
+type="text/javascript" charset="utf-8"></script> <script
+src="/static/horizon/newjs/jquery.json.js" type="text/javascript"
+charset="utf-8"></script> <script
+src="/static/horizon/lib/notification/SmartNotification.min.js"
+type="text/javascript" charset="utf-8"></script> <script
+src="/static/horizon/lib/plugin/jquery-validate/jquery.validate.min.js"
+type="text/javascript" charset="utf-8"></script> <style type="text/css"> body{
+overflow: scroll; font-family: microsoft yahei; } em.invalid{ color: #A90329; } 
+/*register css*/ 
+#register div.container{ width: 1200px; } .registerHeader{ border:none;
+line-height: 50px; height: 90px; width: 100%; padding: 20px 0; }
+.registerHeader p{ text-align: right; } .pagetitle{ color: #333; border-left:
+1px solid #d2d2d2; line-height:17px; margin-left: 5px; padding-left: 5px;
+font-family: microsoft yahei; } .registerBody{ min-height: 420px; padding: 0;
+margin-bottom: 20px; } .registerBody>div{ padding:20px 0; } .registerBody
+label{ font-size: 14px; color: #333; } .registerBody .form-control{ font: 14px
+#333; height: 38px; } .registerBody .col-sm-3,.registerBody .col-md-8{
+padding-left:5px; padding-right: 0px; } .registerBody .successbox{ background:
+url('/static/newui/img/success.png') no-repeat 0 50% ; height: 250px; }
+.registerBody .msgbox{ margin: 100px 0 0 0; } .registerBody .form-group{
+margin-bottom: 20px; } .registerBody .font-small{ color: #666; } .registerBody
+.submitBtn{ margin-top: 30px; } .registerFooter{ border-top:1px solid #CCCCCC;
+width: 100%; height: 100px; padding: 10px 20px; } .successBody{ margin: 0 auto;
+width: 50%; } .successBody p { color: green; font-size: 30px; } .successBody p
+{ font-size: 30px; } .register_service{ display: none; border: 1px solid
+#f2f2f2; } .register_service_content{ height: 355px; overflow-y:auto; padding:
+10px; } .register_service_content p{ /*text-indent: 2em;*/ margin: 10px 0;
+line-height: 24px; } .hr_top{ background: url('/static/newui/img/hr_top.png')
+no-repeat center top; height: 20px; width: 1200px; } #send_code{ margin: 2px 0
+2px 12px; } </style> <script type="text/javascript">
+jQuery(document).ready(function($) { jQuery.validator.addMethod("isPhoneNo",
+function(value, element) { var tel = /^1[3|4|5|8][0-9]\d{8}$/; return
+this.optional(element) || (tel.test(value)); }, "请正确填写您的手机号");
+jQuery.validator.addMethod("existPhone", function(value, element) { var isexist
+= false; $.ajax({ url: '/register', type: 'POST', dataType: 'json',
+async:false, data: { action: 'exist_phone', phonenum: value } }). done(function
+(res) { if(!res.data.exist){ isexist = true; }else{ isexist = false; } }).
+fail(function (error) { console.log(error); isexist = false; }) return
+this.optional(element) || isexist; }, "手机号已存在");
+jQuery.validator.addMethod("existEmail", function(value, element) { var isexist
+= false; $.ajax({ url: '/register', type: 'POST', dataType: 'json',
+async:false, data: { action: 'exist_email', email: value } }). done(function
+(res) { isexist = res.data; }). fail(function (error) { console.log(error);
+isexist = false; }) return this.optional(element) || isexist; }, "邮箱已存在");
+$.validator.addMethod("pass", function(value, element) { var pass =
+/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9\[~`!@#$%^+*&\\\/\?\|:\.<>{}()_',;="\]]+$/;
+return this.optional(element) || (pass.test(value)); }, "invalid password.");
+$("#registerForm").validate({ rules: { email: { required: true, email: true,
+existEmail: true }, password: { required: true, minlength: 6, pass: true },
+number: { required: true, isPhoneNo: true, existPhone: true }, verify: {
+required: true, digits: true, minlength: 6, maxlength: 6 }, iAgree: { required:
+true } }, messages: { email: { required: "请输入Email地址", email:
+"请输入正确的email地址" }, password: { required: "请输入密码", minlength:
+jQuery.format("密码不能小于{0}个字 符"), pass:
+"密码必须同时包含大、小写字母和数字" }, number: { required: "请输手机号" },
+verify: { required: "请输手机验证码", digits: "请输入正确的手机验证码",
+minlength: "请输入正确的手机验证码", maxlength: "请输入正确的手机验证码" },
+iAgree: { required: "必须同意才能注册" } }, onkeyup: false, submitHandler:
+function(form){ $("#errorMsg").hide(); $.ajax({ url: '/register', type: 'POST',
+dataType: 'json', data: { action:"register", email:
+$("input[name=email]").val(), password: $("input[name=password]").val(),
+number: $("input[name=number]").val(), verify: $("input[name=verify]").val() },
+}) .done(function(res) { if(res.code == 500){
+$("#errorMsg").html(res.message).show(); } if(res.code ==200){
+window.location.href = "/register/success" } }) .fail(function() {
+console.log("error"); }) } }); $(".sendVCbtn").click(function(event) { var
+phoneNo = $("input[name=number]").val(); if(phoneNo &&
+!$("input[name=number]").hasClass('invalid')){ $.ajax({ url: '/register', type:
+'POST', dataType: 'json', data: { action: 'send_sms', phonenum: phoneNo },
+}).fail(function() { console.log("error"); }) } else{ return false; }
+$(".sendVCbtn").attr('disabled', 'true'); 
+var n = 60; var setinfo = setInterval(function() { n--; if(n == 0){
+$(".sendVCbtn").html('发送验证码'); clearInterval(setinfo); }else{
+$(".sendVCbtn").html(+ n + '秒'); } 
+}, 1000); var d = setTimeout(function() {
+$(".sendVCbtn").removeAttr('disabled'); clearTimeout(d); }, 60000); });
+$('#tos').click(function(){ if($('.register_service').hasClass('clicked')){
+$('.register_service').hide(); $('.registerBody').animate({'margin-left':
+'25%'}, 500); $('.register_service').removeClass('clicked'); } else {
+$('.registerBody').animate({'margin-left': '0'}, 500);
+$('.register_service').delay(500).fadeIn(500);
+$('.register_service').addClass('clicked'); } }) }); </script> </head> <body
+class="modal-ready" id="register" class="register_wrap"> <div
+class="container"> <div class="row clearfix col-md-12"> <div
+class="registerHeader"> <div class="col-md-12 column"> <a
+href="http://www.plcloud.com" class="register_logo pull-left"><img
+src="/static/newui/img/logo.png" width="180"></a> <h3 class="pagetitle
+pull-left">用户注册</h3> <span
+class="pull-right">如果已经有PLCloud的账号，直接<a
+href="/auth/login/">登录</a></span> </div> </div> <div class="hr_top"></div>
+<div class="col-md-6 col-md-offset-3 column registerBody"> <div
+class="col-md-12 column"> <div class="row clearfix"> <div id="errorMsg"
+class="alert alert-dismissable alert-danger" style="display: none;"></div>
+<form id="registerForm" class="form-horizontal col-md-12" action="register"
+method="post" autocomplete="off"> <div class="form-group"> <label
+for="inputEmail" class="col-sm-2 control-label">邮箱：</label> <div
+class="col-sm-9"> <input name="email" type="text" class="form-control"
+placeholder="您的常用邮箱" value=""/> </div> </div> <div class="form-group">
+<label for="inputPassword" class="col-sm-2 control-label">密码：</label> <div
+class="col-sm-9"> <input name="password" type="password" class="form-control"
+placeholder="必须同时包含大、小写字母和数字" value=""/> </div> </div> <div
+class="form-group"> <label for="inputNumber" class="col-sm-2
+control-label">手机号：</label> <div class="col-sm-6"> <input name="number"
+type="text" class="form-control" placeholder="绑定手机号码用来接收重要通知"/>
+</div> <a id="send_code" href="javascript:void(0);" class="btn btn-success
+sendVCbtn">发送验证码</a> </div> <div class="form-group"> <label
+for="inputVeriCode" class="col-sm-2 control-label">手机验证码：</label> <div
+class="col-sm-9"> <input name="verify" type="text" class="form-control"
+placeholder="请输入您手机收到的验证码"/> </div> </div> <p class="form-group
+text-center"> <input id="iAgree" name="iAgree" type="checkbox"
+checked="checked"> 
+</p> <div class="form-group submitBtn"> <div class="col-sm-offset-2 col-sm-9">
+<button class="btn btn-primary btn-lg btn-block">注册</button> </div> </div>
+</form> </div> </div> </div> <div class="col-md-6 register_service"> <div
+class="register_service_content"> 
+<div class="col-md-12 row clearfix registerFooter"> <div class="column
+text-center"> Copyright © 2013 - 2014 峰云平台有限公司 </div> </div> </div>
+</div> </body> </html> 
